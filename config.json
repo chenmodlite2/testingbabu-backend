@@ -1,8 +1,8 @@
 {
-  "latestCode": 3,
-  "latestName": "3.2",
-  "apkUrl": "https://github.com/chenmodlite2/testingbabu-backend/releases/download/v3.2/CHEN-TOOL-v3.2.apk",
-  "changelog": "CHEN TOOL v3.2 — premium aurora UI + security hardening.",
+  "latestCode": 4,
+  "latestName": "3.3",
+  "apkUrl": "https://github.com/chenmodlite2/testingbabu-backend/releases/download/v3.3/CHEN-TOOL-v3.3.apk",
+  "changelog": "CHEN TOOL v3.3 — engine module renamed, legacy branding removed, UI polish.",
   "force": false,
   "enabled": true
 }
