@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CHEN TOOL · Admin Panel</title>
+<style>
+  :root{
+    --bg:#0a0a14; --panel:#12121f; --panel2:#16162a; --line:#26263f;
+    --purple:#bf5fff; --purple2:#9d4edd; --cyan:#7df9ff; --green:#39ff14;
+    --red:#ff3366; --orange:#ffb347; --text:#f0f0ff; --muted:#7a7a9a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 50% -200px,#9d4edd33,transparent),var(--bg);
+    color:var(--text);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px}
+  header{padding:18px 16px 8px;text-align:center}
+  header h1{margin:0;font-size:22px;letter-spacing:2px}
+  header h1 span{color:var(--purple)} header h1 b{color:var(--cyan)}
+  header p{margin:4px 0 0;color:var(--muted);font-size:12px}
+  nav{display:flex;gap:8px;justify-content:center;padding:14px 12px 0;flex-wrap:wrap}
+  nav button{background:var(--panel);color:var(--muted);border:1px solid var(--line);
+    padding:9px 16px;border-radius:12px;cursor:pointer;font-family:inherit;font-size:13px}
+  nav button.active{color:var(--text);border-color:var(--purple);background:linear-gradient(180deg,#2a1740,#16162a)}
+  main{max-width:760px;margin:0 auto;padding:16px}
+  section{display:none} section.active{display:block}
+  .card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);
+    border-radius:16px;padding:16px;margin-bottom:14px;
+    box-shadow:0 0 0 1px #bf5fff22, 0 8px 30px #0006}
+  .card h2{margin:0 0 12px;font-size:14px;color:var(--cyan);letter-spacing:1px}
+  label{display:block;color:var(--muted);font-size:12px;margin:10px 0 4px}
+  input,textarea,select{width:100%;background:#0c0c17;border:1px solid var(--line);color:var(--text);
+    border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13px;outline:none}
+  input:focus,textarea:focus{border-color:var(--purple)}
+  textarea{resize:vertical;min-height:64px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .row>*{flex:1;min-width:120px}
+  .check{display:flex;align-items:center;gap:8px;margin-top:14px}
+  .check input{width:auto}
+  button.btn{background:linear-gradient(90deg,var(--purple2),var(--purple));color:#fff;border:0;
+    border-radius:12px;padding:11px 16px;font-family:inherit;font-size:13px;cursor:pointer;
+    letter-spacing:1px;margin-top:14px}
+  button.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+  button.btn.danger{background:linear-gradient(90deg,#7a0f28,var(--red))}
+  button.btn:hover{filter:brightness(1.12)}
+  .muted{color:var(--muted);font-size:12px;margin-top:8px;line-height:1.5}
+  .key-row{display:flex;align-items:center;gap:10px;background:#0c0c17;border:1px solid var(--line);
+    border-radius:12px;padding:10px 12px;margin-bottom:8px}
+  .key-row .info{flex:1;min-width:0}
+  .key-hash{font-size:11px;color:var(--cyan);word-break:break-all}
+  .key-meta{font-size:11px;color:var(--muted);margin-top:3px}
+  .pill{font-size:10px;padding:2px 8px;border-radius:99px;border:1px solid}
+  .pill.on{color:var(--green);border-color:var(--green)}
+  .pill.off{color:var(--red);border-color:var(--red)}
+  .icon{background:transparent;border:1px solid var(--line);color:var(--text);border-radius:8px;
+    cursor:pointer;padding:6px 9px;font-family:inherit;font-size:12px}
+  .icon:hover{border-color:var(--purple)}
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#16162a;
+    border:1px solid var(--purple);color:var(--text);padding:12px 18px;border-radius:12px;
+    opacity:0;pointer-events:none;transition:.25s;max-width:90vw;z-index:50}
+  #toast.show{opacity:1}
+  #toast.err{border-color:var(--red)}
+  #toast.ok{border-color:var(--green)}
+  .warn{background:#3a1a00;border:1px solid var(--orange);color:var(--orange);
+    padding:10px 12px;border-radius:10px;font-size:12px;margin-bottom:14px}
+  code{background:#0c0c17;padding:2px 6px;border-radius:6px;color:var(--cyan)}
+</style>
+</head>
+<body>
+<header>
+  <h1><span>CHEN</span> TOOL · <b>ADMIN PANEL</b></h1>
+  <p>manage license keys &amp; app updates via GitHub — free to host</p>
+</header>
+
+<nav>
+  <button data-tab="keys" class="active">KEYS</button>
+  <button data-tab="update">APP UPDATE</button>
+  <button data-tab="setup">SETUP</button>
+</nav>
+
+<main>
+  <div id="secureWarn" class="warn" style="display:none">
+    ⚠ Page is not on HTTPS/localhost — key hashing (crypto.subtle) is disabled.
+    Host this panel on GitHub Pages / Netlify (both free).
+  </div>
+
+  <!-- KEYS -->
+  <section id="tab-keys" class="active">
+    <div class="card">
+      <h2>ADD KEY</h2>
+      <div class="row">
+        <div>
+          <label>Key</label>
+          <input id="newKey" placeholder="CHEN-XXXX-XXXX-XXXX" />
+        </div>
+      </div>
+      <div class="row">
+        <div><label>Label / plan (optional)</label><input id="newLabel" placeholder="vip-1month" /></div>
+        <div><label>Expiry (optional, YYYY-MM-DD)</label><input id="newExpiry" placeholder="2026-12-31" /></div>
+      </div>
+      <div class="row">
+        <button class="btn" id="addBtn">ADD KEY</button>
+        <button class="btn ghost" id="genBtn">GENERATE &amp; ADD</button>
+      </div>
+      <div class="muted">
+        Only the SHA-256 hash of a key is stored (in <code>keys.json</code>). The raw key is shown once
+        after adding — copy it and send it to your user.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>ACTIVE KEYS</h2>
+      <div class="row">
+        <button class="btn ghost" id="reloadKeys">RELOAD LIST</button>
+      </div>
+      <div id="keysList"></div>
+    </div>
+  </section>
+
+  <!-- UPDATE -->
+  <section id="tab-update">
+    <div class="card">
+      <h2>APP UPDATE CONFIG</h2>
+      <div class="row">
+        <div><label>Latest version code (integer, must be &gt; installed)</label><input id="uCode" type="number" placeholder="3" /></div>
+        <div><label>Latest version name</label><input id="uName" placeholder="3.2" /></div>
+      </div>
+      <label>APK download URL (e.g. a GitHub Release asset link)</label>
+      <input id="uUrl" placeholder="https://github.com/user/repo/releases/download/v3.2/app.apk" />
+      <label>Changelog / what's new</label>
+      <textarea id="uLog" placeholder="• bug fixes&#10;• new inject engine"></textarea>
+      <div class="check"><input type="checkbox" id="uForce" /><span>Force update (user cannot skip)</span></div>
+      <div class="check"><input type="checkbox" id="uEnabled" checked /><span>Update checks enabled</span></div>
+      <div class="row">
+        <button class="btn" id="saveCfg">SAVE UPDATE CONFIG</button>
+        <button class="btn ghost" id="loadCfg">LOAD CURRENT</button>
+      </div>
+      <div class="muted">Saved to <code>config.json</code> in your repo.</div>
+    </div>
+  </section>
+
+  <!-- SETUP -->
+  <section id="tab-setup">
+    <div class="card">
+      <h2>GITHUB CONNECTION</h2>
+      <div class="row">
+        <div><label>Owner / username</label><input id="ghOwner" placeholder="chenmodlite2" /></div>
+        <div><label>Repo</label><input id="ghRepo" placeholder="testingbabu" /></div>
+      </div>
+      <div class="row">
+        <div><label>Branch</label><input id="ghBranch" placeholder="main" /></div>
+      </div>
+      <label>Personal Access Token (classic, scope: <code>repo</code>)</label>
+      <input id="ghToken" type="password" placeholder="ghp_..." />
+      <div class="row">
+        <button class="btn" id="saveConn">SAVE CONNECTION</button>
+        <button class="btn ghost" id="testConn">TEST</button>
+      </div>
+      <div class="muted">
+        Create a token at <code>github.com/settings/tokens</code> (classic) with <b>repo</b> scope.
+        It is stored only in this browser (localStorage) and used to read/write
+        <code>keys.json</code> and <code>config.json</code>. Keep this page private.
+        The app reads those files from:<br />
+        <code id="rawBase">https://raw.githubusercontent.com/&lt;owner&gt;/&lt;repo&gt;/&lt;branch&gt;</code>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="toast"></div>
+
+<script>
+  const LS = 'chen_panel_gh';
+  const state = { owner:'chenmodlite2', repo:'testingbabu-backend', branch:'main', token:'' };
+
+  const $ = (id)=>document.getElementById(id);
+
+  function toast(msg, kind){
+    const t=$('toast'); t.textContent=msg; t.className='show '+(kind||'');
+    clearTimeout(t._id); t._id=setTimeout(()=>t.className='',3000);
+  }
+
+  function loadConn(){
+    try{
+      const s=JSON.parse(localStorage.getItem(LS)||'{}');
+      state.owner=s.owner||state.owner; state.repo=s.repo||state.repo;
+      state.branch=s.branch||state.branch; state.token=s.token||'';
+    }catch(e){}
+    $('ghOwner').value=state.owner; $('ghRepo').value=state.repo;
+    $('ghBranch').value=state.branch; $('ghToken').value=state.token;
+    $('secureWarn').style.display = window.isSecureContext ? 'none' : 'block';
+    updateRawBase();
+  }
+  function updateRawBase(){
+    $('rawBase').textContent = 'https://raw.githubusercontent.com/'+state.owner+'/'+state.repo+'/'+state.branch;
+  }
+  function saveConn(){
+    state.owner=$('ghOwner').value.trim()||state.owner;
+    state.repo=$('ghRepo').value.trim()||state.repo;
+    state.branch=$('ghBranch').value.trim()||'main';
+    state.token=$('ghToken').value.trim();
+    localStorage.setItem(LS, JSON.stringify(state));
+    updateRawBase();
+    toast('Connection saved','ok');
+  }
+
+  // ---- UTF-8 safe base64 ----
+  function b64enc(str){
+    const bytes=new TextEncoder().encode(str); let bin='';
+    for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+  function b64dec(b64){
+    const bin=atob((b64||'').replace(/\s/g,''));
+    const bytes=Uint8Array.from(bin, c=>c.charCodeAt(0));
+    return new TextDecoder().decode(bytes);
+  }
+
+  // ---- GitHub Contents API ----
+  function contentsUrl(path){
+    return 'https://api.github.com/repos/'+state.owner+'/'+state.repo+'/contents/'+path;
+  }
+  async function ghRaw(path, opts){
+    if(!state.token) throw new Error('Set your GitHub token in SETUP first');
+    const r=await fetch(contentsUrl(path), Object.assign({
+      headers:{
+        'Authorization':'Bearer '+state.token,
+        'Accept':'application/vnd.github+json',
+        'X-GitHub-Api-Version':'2022-11-28'
+      }
+    }, opts||{}));
+    return r;
+  }
+  async function readJson(path){
+    const r=await ghRaw(path+'?ref='+encodeURIComponent(state.branch));
+    if(r.status===404) return { data:null, sha:null };
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(j.message||('HTTP '+r.status));
+    let data=null; try{ data=JSON.parse(b64dec(j.content)); }catch(e){}
+    return { data, sha:j.sha };
+  }
+  async function writeJson(path, obj, message, sha){
+    const body={ message: message||('update '+path), content: b64enc(JSON.stringify(obj,null,2)), branch: state.branch };
+    if(sha) body.sha=sha;
+    const r=await ghRaw(path,{ method:'PUT', body: JSON.stringify(body) });
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(j.message||('HTTP '+r.status));
+    return j;
+  }
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function normKey(k){ return k.trim().toUpperCase().replace(/ /g,''); }
+  async function sha256hex(str){
+    if(!window.crypto||!window.crypto.subtle) throw new Error('HTTPS required for hashing');
+    const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+  }
+  function genKey(){
+    const seg=()=>Array.from({length:4},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
+    return 'CHEN-'+seg()+'-'+seg()+'-'+seg();
+  }
+
+  async function addKeyObject(rawKey,label,expiry){
+    const hash=await sha256hex(normKey(rawKey));
+    const {data,sha}=await readJson('keys.json');
+    const obj=data||{};
+    obj[hash]={active:true,label:label||'',expiry:expiry||'',created:Date.now()};
+    await writeJson('keys.json',obj,'add key '+hash.slice(0,12),sha);
+    return hash;
+  }
+
+  $('addBtn').onclick=async()=>{
+    const raw=$('newKey').value.trim();
+    if(!raw) return toast('Enter a key or use GENERATE','err');
+    try{
+      const hash=await addKeyObject(raw,$('newLabel').value.trim(),$('newExpiry').value.trim());
+      toast('Key added · '+hash.slice(0,12)+'…','ok');
+      $('newKey').value=''; $('newLabel').value=''; $('newExpiry').value='';
+      loadKeys();
+    }catch(e){ toast(e.message,'err'); }
+  };
+  $('genBtn').onclick=async()=>{
+    const raw=genKey();
+    try{
+      await addKeyObject(raw,$('newLabel').value.trim(),$('newExpiry').value.trim());
+      const box=$('newKey'); box.value=raw; box.select();
+      try{ await navigator.clipboard.writeText(raw); toast('Key generated & copied: '+raw,'ok'); }
+      catch(e){ toast('Key generated (copy it): '+raw,'ok'); }
+      loadKeys();
+    }catch(e){ toast(e.message,'err'); }
+  };
+
+  async function loadKeys(){
+    if(!state.token){ $('keysList').innerHTML='<div class="muted">Set your GitHub token in SETUP first.</div>'; return; }
+    $('keysList').innerHTML='<div class="muted">loading…</div>';
+    try{
+      const {data}=await readJson('keys.json');
+      const map=data||{};
+      const hashes=Object.keys(map);
+      if(!hashes.length){ $('keysList').innerHTML='<div class="muted">No keys yet.</div>'; return; }
+      hashes.sort((a,b)=>(map[b].created||0)-(map[a].created||0));
+      $('keysList').innerHTML=hashes.map(h=>{
+        const k=map[h]||{}; const on=k.active!==false;
+        return '<div class="key-row">'
+          +'<div class="info"><div class="key-hash">'+esc(h)+'</div>'
+          +'<div class="key-meta">'+(k.label?esc(k.label):'—')+(k.expiry?(' · exp '+esc(k.expiry)):'')+'</div></div>'
+          +'<span class="pill '+(on?'on':'off')+'">'+(on?'ON':'OFF')+'</span>'
+          +'<button class="icon" data-act="toggle" data-h="'+esc(h)+'" data-on="'+on+'">'+(on?'DISABLE':'ENABLE')+'</button>'
+          +'<button class="icon" data-act="edit" data-h="'+esc(h)+'">EDIT</button>'
+          +'<button class="icon" data-act="del" data-h="'+esc(h)+'">DEL</button>'
+          +'</div>';
+      }).join('');
+    }catch(e){ $('keysList').innerHTML='<div class="muted">Error: '+esc(e.message)+'</div>'; }
+  }
+  $('reloadKeys').onclick=loadKeys;
+
+  $('keysList').addEventListener('click', async (ev)=>{
+    const b=ev.target.closest('button[data-act]'); if(!b) return;
+    const h=b.dataset.h, act=b.dataset.act;
+    try{
+      const {data,sha}=await readJson('keys.json');
+      const map=data||{}; if(!map[h]) { toast('Key missing','err'); return; }
+      if(act==='toggle'){ map[h].active = b.dataset.on!=='true'; await writeJson('keys.json',map,'toggle '+h.slice(0,12),sha); toast('Updated','ok'); loadKeys(); }
+      else if(act==='edit'){
+        const label=prompt('Label / plan:', map[h].label||''); if(label===null) return;
+        const expiry=prompt('Expiry (YYYY-MM-DD) or empty:', map[h].expiry||''); if(expiry===null) return;
+        map[h].label=label.trim(); map[h].expiry=expiry.trim();
+        await writeJson('keys.json',map,'edit '+h.slice(0,12),sha); toast('Saved','ok'); loadKeys();
+      } else if(act==='del'){
+        if(!confirm('Delete this key permanently?')) return;
+        delete map[h];
+        await writeJson('keys.json',map,'delete '+h.slice(0,12),sha); toast('Deleted','ok'); loadKeys();
+      }
+    }catch(e){ toast(e.message,'err'); }
+  });
+
+  // ---- update config ----
+  async function loadCfg(){
+    if(!state.token) return toast('Set GitHub token in SETUP','err');
+    try{
+      const {data}=await readJson('config.json');
+      const c=data||{};
+      $('uCode').value=c.latestCode||''; $('uName').value=c.latestName||'';
+      $('uUrl').value=c.apkUrl||''; $('uLog').value=c.changelog||'';
+      $('uForce').checked=!!c.force; $('uEnabled').checked=c.enabled!==false;
+      toast('Loaded','ok');
+    }catch(e){ toast(e.message,'err'); }
+  }
+  $('loadCfg').onclick=loadCfg;
+  $('saveCfg').onclick=async()=>{
+    try{
+      const {sha}=await readJson('config.json');
+      await writeJson('config.json',{
+        latestCode: parseInt($('uCode').value||'0',10)||0,
+        latestName: $('uName').value.trim(),
+        apkUrl: $('uUrl').value.trim(),
+        changelog: $('uLog').value.trim(),
+        force: $('uForce').checked,
+        enabled: $('uEnabled').checked,
+      },'update app config',sha);
+      toast('Update config saved','ok');
+    }catch(e){ toast(e.message,'err'); }
+  };
+
+  // ---- setup ----
+  $('saveConn').onclick=()=>{ saveConn(); loadKeys(); };
+  $('testConn').onclick=async()=>{
+    saveConn();
+    try{ const {data}=await readJson('config.json'); toast('Connection OK'+(data?'':' (config.json missing)'),'ok'); }
+    catch(e){ toast('Failed: '+e.message,'err'); }
+  };
+
+  document.querySelectorAll('nav button').forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('section').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      $('tab-'+b.dataset.tab).classList.add('active');
+      if(b.dataset.tab==='keys') loadKeys();
+      if(b.dataset.tab==='update') loadCfg();
+    };
+  });
+
+  loadConn();
+</script>
+</body>
+</html>
