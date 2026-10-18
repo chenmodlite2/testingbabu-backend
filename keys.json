@@ -9,5 +9,16 @@
     "created": 1792303799940,
     "banned": false,
     "reason": ""
+  },
+  "534987d68150e82ee9ef30a4d1d4f8d50d4a62c4650d0fe9cf0920c4942d68a3": {
+    "active": true,
+    "label": "FREE",
+    "expiry": "2026-10-23",
+    "note": "@CHEN_TOOL2",
+    "maxDevices": 200,
+    "devices": {},
+    "created": 1792313614380,
+    "banned": false,
+    "reason": ""
   }
 }
