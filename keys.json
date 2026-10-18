@@ -1,13 +1,1 @@
-{
-  "FDFD5E3B151F75EBC8D6CE2575F347D8535EB034C15524A0A6CF733A294C85CD": {
-    "active": true,
-    "banned": false,
-    "label": "admin",
-    "expiry": "",
-    "note": "owner / master key",
-    "maxDevices": 0,
-    "devices": {},
-    "reason": "",
-    "created": 1730000000000
-  }
-}
+{}
