@@ -1,13 +1,13 @@
 {
   "44d7ec80ba51f6356a8821444c9bdae6d9d1683f1e4a411793ae350fb5704f15": {
-    "active": true,
+    "active": false,
     "label": "VIP",
     "expiry": "2027-12-01",
     "note": "@CHEN_TOOL2",
     "maxDevices": 1,
     "devices": {},
     "created": 1792303799940,
-    "banned": false,
-    "reason": ""
+    "banned": true,
+    "reason": "banned"
   }
 }
