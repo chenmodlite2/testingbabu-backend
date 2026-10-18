@@ -1,11 +1,11 @@
 {
-  "latestCode": 6,
-  "latestName": "3.5",
-  "apkUrl": "",
-  "changelog": "CHEN TOOL v3.5 — luac 5.3 now executes from nativeLibraryDir (fixes permission-denied / red compiler on Android 10+), admin-panel shortcut removed from the tool.",
+  "latestCode": 7,
+  "latestName": "3.6",
+  "apkUrl": "https://github.com/chenmodlite2/testingbabu1/releases/latest/download/CHEN-TOOL-v3.6-release.apk",
+  "changelog": "CHEN TOOL v3.6 — Telegram community button, luac 5.3 executes from nativeLibraryDir (permission-denied fix), admin-panel shortcut removed.",
   "force": false,
   "enabled": true,
   "vpnBlock": true,
   "killSwitch": false,
-  "notice": "Welcome to CHEN TOOL v3.5"
+  "notice": "Welcome to CHEN TOOL v3.6"
 }
