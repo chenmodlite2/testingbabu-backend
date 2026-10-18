@@ -1,14 +1,24 @@
 {
   "FDFD5E3B151F75EBC8D6CE2575F347D8535EB034C15524A0A6CF733A294C85CD": {
     "active": true,
+    "banned": false,
     "label": "admin",
     "expiry": "",
+    "note": "owner / master key",
+    "maxDevices": 0,
+    "devices": {},
+    "reason": "",
     "created": 1730000000000
   },
   "116F5BA829DBAF1D085EFF5CD4F5D61E37D019829EEFCB1FFF806D90B9191402": {
     "active": true,
+    "banned": false,
     "label": "Vip",
     "expiry": "2927-12-25",
+    "note": "lifetime vip",
+    "maxDevices": 2,
+    "devices": {},
+    "reason": "",
     "created": 1792252992001
   }
 }

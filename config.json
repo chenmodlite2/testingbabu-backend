@@ -1,8 +1,12 @@
 {
-  "latestCode": 4,
-  "latestName": "3.3",
-  "apkUrl": "https://github.com/chenmodlite2/testingbabu-backend/releases/download/v3.3/CHEN-TOOL-v3.3.apk",
-  "changelog": "CHEN TOOL v3.3 — engine module renamed, legacy branding removed, UI polish.",
+  "latestCode": 5,
+  "latestName": "3.4",
+  "apkUrl": "https://github.com/chenmodlite2/testingbabu1/releases/latest/download/CHEN-TOOL-v3.4-release.apk",
+  "changelog": "CHEN TOOL v3.4 — fixed Lua compile/decompile engine (luac 5.3 + unluac), new top logo bar, redesigned EXIT TOOL flow, anti-crack / anti-extract integrity checks, VPN protection, realtime key panel.",
   "force": false,
-  "enabled": true
+  "enabled": true,
+  "vpnBlock": true,
+  "killSwitch": false,
+  "notice": "Welcome to CHEN TOOL v3.4",
+  "panelUrl": "https://chenmodlite2.github.io/testingbabu-backend/panel/"
 }

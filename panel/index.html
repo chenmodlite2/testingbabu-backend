@@ -2,385 +2,1156 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>CHEN TOOL · Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0A0A14" />
+<title>CHEN TOOL · Control Panel</title>
 <style>
   :root{
-    --bg:#0a0a14; --panel:#12121f; --panel2:#16162a; --line:#26263f;
-    --purple:#bf5fff; --purple2:#9d4edd; --cyan:#7df9ff; --green:#39ff14;
-    --red:#ff3366; --orange:#ffb347; --text:#f0f0ff; --muted:#7a7a9a;
+    --bg:#0a0a14; --bg2:#07070f; --panel:#12121f; --panel2:#16162a; --card:#16162a;
+    --line:#26263f; --purple:#bf5fff; --purple2:#9d4edd; --cyan:#7df9ff;
+    --green:#39ff14; --red:#ff3366; --orange:#ffb347; --text:#f0f0ff; --muted:#7a7a9a;
+    --tsec:#b8b8d0; --radius:16px;
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:radial-gradient(1200px 600px at 50% -200px,#9d4edd33,transparent),var(--bg);
-    color:var(--text);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px}
-  header{padding:18px 16px 8px;text-align:center}
-  header h1{margin:0;font-size:22px;letter-spacing:2px}
-  header h1 span{color:var(--purple)} header h1 b{color:var(--cyan)}
-  header p{margin:4px 0 0;color:var(--muted);font-size:12px}
-  nav{display:flex;gap:8px;justify-content:center;padding:14px 12px 0;flex-wrap:wrap}
-  nav button{background:var(--panel);color:var(--muted);border:1px solid var(--line);
-    padding:9px 16px;border-radius:12px;cursor:pointer;font-family:inherit;font-size:13px}
-  nav button.active{color:var(--text);border-color:var(--purple);background:linear-gradient(180deg,#2a1740,#16162a)}
-  main{max-width:760px;margin:0 auto;padding:16px}
-  section{display:none} section.active{display:block}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;min-height:100%}
+  body{
+    background:
+      radial-gradient(900px 460px at 50% -180px,#9d4edd38,transparent),
+      radial-gradient(700px 380px at 100% 10%,#7df9ff14,transparent),
+      var(--bg);
+    color:var(--text);
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Roboto Mono",monospace;
+    font-size:14px;
+  }
+  .phone{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;
+    background:linear-gradient(180deg,#0c0c18,#08080f);border-left:1px solid var(--line);
+    border-right:1px solid var(--line)}
+  /* ---------------------------------------------------------------- header */
+  header.top{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:10px;
+    padding:12px 14px;background:linear-gradient(180deg,#12121f,#0a0a14f2);
+    border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+  .logo{width:40px;height:40px;flex:0 0 40px;border-radius:13px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--purple2),var(--purple));
+    box-shadow:0 0 0 1px #7df9ff77,0 6px 18px #bf5fff33}
+  .logo svg{width:26px;height:26px}
+  .brand{flex:1;min-width:0;line-height:1.15}
+  .brand b{color:var(--purple)} .brand i{color:var(--cyan);font-style:normal}
+  .brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.5px}
+  .chip{font-size:10px;padding:4px 9px;border-radius:999px;border:1px solid var(--line);
+    color:var(--muted);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+  .chip.off .dot{background:var(--red);box-shadow:0 0 8px var(--red)}
+  .chip.busy .dot{background:var(--orange);box-shadow:0 0 8px var(--orange)}
+  /* ------------------------------------------------------------------ main */
+  main{flex:1;padding:14px 14px 96px}
+  section{display:none;animation:fade .22s ease}
+  section.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   .card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);
-    border-radius:16px;padding:16px;margin-bottom:14px;
-    box-shadow:0 0 0 1px #bf5fff22, 0 8px 30px #0006}
-  .card h2{margin:0 0 12px;font-size:14px;color:var(--cyan);letter-spacing:1px}
-  label{display:block;color:var(--muted);font-size:12px;margin:10px 0 4px}
+    border-radius:var(--radius);padding:14px;margin-bottom:14px;
+    box-shadow:0 0 0 1px #bf5fff14,0 10px 26px #0007}
+  .card h2{margin:0 0 12px;font-size:12px;letter-spacing:1.4px;color:var(--cyan);
+    display:flex;align-items:center;gap:8px;text-transform:uppercase}
+  .card h2 .bar{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+  label{display:block;color:var(--muted);font-size:11px;margin:10px 0 5px;letter-spacing:.4px}
   input,textarea,select{width:100%;background:#0c0c17;border:1px solid var(--line);color:var(--text);
-    border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13px;outline:none}
-  input:focus,textarea:focus{border-color:var(--purple)}
-  textarea{resize:vertical;min-height:64px}
+    border-radius:11px;padding:11px 12px;font-family:inherit;font-size:13px;outline:none}
+  input:focus,textarea:focus,select:focus{border-color:var(--purple);box-shadow:0 0 0 3px #bf5fff1f}
+  textarea{resize:vertical;min-height:70px}
   .row{display:flex;gap:10px;flex-wrap:wrap}
   .row>*{flex:1;min-width:120px}
-  .check{display:flex;align-items:center;gap:8px;margin-top:14px}
-  .check input{width:auto}
-  button.btn{background:linear-gradient(90deg,var(--purple2),var(--purple));color:#fff;border:0;
-    border-radius:12px;padding:11px 16px;font-family:inherit;font-size:13px;cursor:pointer;
-    letter-spacing:1px;margin-top:14px}
-  button.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
-  button.btn.danger{background:linear-gradient(90deg,#7a0f28,var(--red))}
-  button.btn:hover{filter:brightness(1.12)}
-  .muted{color:var(--muted);font-size:12px;margin-top:8px;line-height:1.5}
-  .key-row{display:flex;align-items:center;gap:10px;background:#0c0c17;border:1px solid var(--line);
-    border-radius:12px;padding:10px 12px;margin-bottom:8px}
-  .key-row .info{flex:1;min-width:0}
-  .key-hash{font-size:11px;color:var(--cyan);word-break:break-all}
-  .key-meta{font-size:11px;color:var(--muted);margin-top:3px}
-  .pill{font-size:10px;padding:2px 8px;border-radius:99px;border:1px solid}
-  .pill.on{color:var(--green);border-color:var(--green)}
-  .pill.off{color:var(--red);border-color:var(--red)}
-  .icon{background:transparent;border:1px solid var(--line);color:var(--text);border-radius:8px;
-    cursor:pointer;padding:6px 9px;font-family:inherit;font-size:12px}
-  .icon:hover{border-color:var(--purple)}
-  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#16162a;
-    border:1px solid var(--purple);color:var(--text);padding:12px 18px;border-radius:12px;
-    opacity:0;pointer-events:none;transition:.25s;max-width:90vw;z-index:50}
-  #toast.show{opacity:1}
-  #toast.err{border-color:var(--red)}
-  #toast.ok{border-color:var(--green)}
-  .warn{background:#3a1a00;border:1px solid var(--orange);color:var(--orange);
-    padding:10px 12px;border-radius:10px;font-size:12px;margin-bottom:14px}
-  code{background:#0c0c17;padding:2px 6px;border-radius:6px;color:var(--cyan)}
+  .check{display:flex;align-items:center;gap:9px;margin-top:12px;color:var(--tsec);font-size:12px}
+  .check input{width:auto;flex:0 0 auto}
+  .btn{width:100%;border:0;border-radius:13px;padding:13px 16px;font-family:inherit;font-size:13px;
+    font-weight:700;letter-spacing:1px;cursor:pointer;margin-top:12px;color:#fff;
+    background:linear-gradient(90deg,var(--purple2),var(--purple));transition:filter .15s}
+  .btn:hover{filter:brightness(1.12)} .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+  .btn.danger{background:linear-gradient(90deg,#7a0f28,var(--red))}
+  .btn.green{background:linear-gradient(90deg,#127a34,var(--green));color:#04220e}
+  .btn.cyan{background:linear-gradient(90deg,#0b7c8a,var(--cyan));color:#02232a}
+  .btn.sm{padding:8px 12px;font-size:11px;margin-top:0;width:auto}
+  .muted{color:var(--muted);font-size:11px;line-height:1.55}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .stat{background:#0c0c17;border:1px solid var(--line);border-radius:13px;padding:12px}
+  .stat b{display:block;font-size:22px;color:var(--cyan);line-height:1.1}
+  .stat span{font-size:10px;color:var(--muted);letter-spacing:.6px;text-transform:uppercase}
+  .stat.p b{color:var(--purple)} .stat.g b{color:var(--green)}
+  .stat.r b{color:var(--red)} .stat.o b{color:var(--orange)}
+  /* ------------------------------------------------------------------ keys */
+  .key{border:1px solid var(--line);border-radius:13px;padding:11px 12px;margin-bottom:9px;
+    background:#0c0c17}
+  .key.banned{opacity:.62;border-color:#ff336655}
+  .key .t{display:flex;align-items:center;gap:8px}
+  .key .t b{font-size:12px;color:var(--text);flex:1;min-width:0;overflow:hidden;
+    text-overflow:ellipsis;white-space:nowrap}
+  .key .hash{font-size:10px;color:var(--cyan);word-break:break-all;margin-top:5px;line-height:1.45}
+  .key .meta{font-size:10px;color:var(--muted);margin-top:5px;line-height:1.6}
+  .key .acts{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+  .badge{font-size:9px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);
+    color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+  .badge.ok{color:var(--green);border-color:#39ff1455}
+  .badge.no{color:var(--red);border-color:#ff336655}
+  .badge.warn{color:var(--orange);border-color:#ffb34755}
+  .badge.vip{color:var(--purple);border-color:#bf5fff55}
+  .searchrow{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+  .filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px}
+  .filters button{flex:0 0 auto;background:#0c0c17;border:1px solid var(--line);color:var(--muted);
+    border-radius:999px;padding:7px 13px;font-family:inherit;font-size:11px;cursor:pointer}
+  .filters button.on{color:var(--text);border-color:var(--purple);background:#2a1740}
+  /* ------------------------------------------------------------------- nav */
+  nav.bottom{position:fixed;bottom:0;left:0;right:0;z-index:40;max-width:520px;margin:0 auto;
+    display:grid;grid-template-columns:repeat(5,1fr);gap:0;background:#12121fee;
+    border-top:1px solid var(--line);backdrop-filter:blur(10px);padding-bottom:env(safe-area-inset-bottom)}
+  nav.bottom button{background:none;border:0;color:var(--muted);font-family:inherit;font-size:9.5px;
+    padding:9px 2px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;
+    letter-spacing:.3px}
+  nav.bottom button .ic{font-size:17px;line-height:1}
+  nav.bottom button.on{color:var(--purple)}
+  nav.bottom button.on .ic{filter:drop-shadow(0 0 8px #bf5fff99)}
+  /* ------------------------------------------------------------------ misc */
+  .toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%) translateY(20px);
+    background:#16162a;border:1px solid var(--purple);color:var(--text);padding:11px 16px;
+    border-radius:12px;font-size:12px;opacity:0;pointer-events:none;transition:.25s;z-index:99;
+    max-width:90%;text-align:center;box-shadow:0 10px 30px #000a}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.err{border-color:var(--red)}
+  .log{background:#07070f;border:1px solid var(--line);border-radius:12px;padding:10px;
+    height:190px;overflow:auto;font-size:10.5px;line-height:1.7}
+  .log div{color:var(--cyan)} .log div.e{color:var(--red)} .log div.w{color:var(--orange)}
+  .log div.s{color:var(--green)}
+  dialog{border:0;border-radius:18px;padding:0;background:transparent;max-width:520px;width:92%}
+  dialog::backdrop{background:#000000cc;backdrop-filter:blur(3px)}
+  .modal{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--purple);
+    border-radius:18px;padding:16px;max-height:86vh;overflow:auto}
+  .modal h3{margin:0 0 12px;color:var(--purple);font-size:13px;letter-spacing:1.2px}
+  .hidden{display:none!important}
+  .lock{position:fixed;inset:0;z-index:200;background:linear-gradient(180deg,#0c0c18,#08080f);
+    display:grid;place-items:center;padding:24px}
+  .lock .box{width:100%;max-width:380px;text-align:center}
+  .kv{display:flex;justify-content:space-between;gap:10px;font-size:11px;padding:5px 0;
+    border-bottom:1px dashed #26263f66}
+  .kv span{color:var(--muted)} .kv b{color:var(--text);text-align:right;word-break:break-all}
+  .spread{display:flex;gap:8px;align-items:center;justify-content:space-between}
+  .spin{display:inline-block;width:12px;height:12px;border:2px solid #ffffff33;
+    border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
-<header>
-  <h1><span>CHEN</span> TOOL · <b>ADMIN PANEL</b></h1>
-  <p>manage license keys &amp; app updates via GitHub — free to host</p>
-</header>
 
-<nav>
-  <button data-tab="keys" class="active">KEYS</button>
-  <button data-tab="update">APP UPDATE</button>
-  <button data-tab="setup">SETUP</button>
-</nav>
+<div class="phone">
+  <header class="top">
+    <div class="logo">
+      <svg viewBox="0 0 48 48" fill="none">
+        <path d="M24 3 L42 10.5 V24.5 C42 35 34.3 42.8 24 44.7 C13.7 42.8 6 35 6 24.5 V10.5 Z"
+              stroke="#7df9ff" stroke-width="2.4" fill="#150a2c"/>
+        <path d="M26.6 11.5 L15.4 26.6 H22.4 L20.6 36.5 L32.6 21 H25.4 Z" fill="#bf5fff"/>
+      </svg>
+    </div>
+    <div class="brand">
+      <div style="font-size:15px"><b>CHEN</b> <i>TOOL</i></div>
+      <small>control panel · realtime</small>
+    </div>
+    <span class="chip" id="statusChip"><span class="dot"></span><span id="statusText">idle</span></span>
+  </header>
 
-<main>
-  <div id="secureWarn" class="warn" style="display:none">
-    ⚠ Page is not on HTTPS/localhost — key hashing (crypto.subtle) is disabled.
-    Host this panel on GitHub Pages / Netlify (both free).
-  </div>
+  <main>
+    <!-- ============================== DASHBOARD ============================== -->
+    <section id="tab-dash" class="on">
+      <div class="card">
+        <h2>Overview <span class="bar"></span></h2>
+        <div class="grid2">
+          <div class="stat p"><b id="sTotal">0</b><span>total keys</span></div>
+          <div class="stat g"><b id="sActive">0</b><span>active</span></div>
+          <div class="stat r"><b id="sBanned">0</b><span>banned</span></div>
+          <div class="stat o"><b id="sExpiring">0</b><span>expiring &lt;30d</span></div>
+        </div>
+        <div style="margin-top:12px" class="kv"><span>backend</span><b id="dBackend">—</b></div>
+        <div class="kv"><span>branch</span><b id="dBranch">—</b></div>
+        <div class="kv"><span>last sync</span><b id="dSync">never</b></div>
+        <div class="kv"><span>auto refresh</span><b id="dAuto">15s</b></div>
+        <button class="btn cyan" id="btnRefresh">⟳ REFRESH NOW</button>
+      </div>
 
-  <!-- KEYS -->
-  <section id="tab-keys" class="active">
-    <div class="card">
-      <h2>ADD KEY</h2>
-      <div class="row">
-        <div>
-          <label>Key</label>
-          <input id="newKey" placeholder="CHEN-XXXX-XXXX-XXXX" />
+      <div class="card">
+        <h2>Latest keys <span class="bar"></span></h2>
+        <div id="dashRecent"></div>
+      </div>
+
+      <div class="card">
+        <h2>App build status <span class="bar"></span></h2>
+        <div class="kv"><span>published version</span><b id="dVer">—</b></div>
+        <div class="kv"><span>apk url</span><b id="dApk">—</b></div>
+        <div class="kv"><span>vpn protection</span><b id="dVpn">—</b></div>
+        <div class="kv"><span>service enabled</span><b id="dEnabled">—</b></div>
+      </div>
+    </section>
+
+    <!-- ================================= KEYS ================================ -->
+    <section id="tab-keys">
+      <div class="card">
+        <h2>Keys <span class="bar"></span><span class="badge" id="keysCount">0</span></h2>
+        <div class="searchrow">
+          <input id="keySearch" placeholder="search label / hash / note…" />
+        </div>
+        <div class="filters" id="keyFilters">
+          <button data-f="all" class="on">ALL</button>
+          <button data-f="active">ACTIVE</button>
+          <button data-f="banned">BANNED</button>
+          <button data-f="expiring">EXPIRING</button>
+          <button data-f="never">LIFETIME</button>
+        </div>
+        <div id="keyList"></div>
+      </div>
+      <button class="btn" id="btnOpenAdd">＋ ADD / GENERATE KEY</button>
+      <button class="btn ghost" id="btnExport">⤓ EXPORT keys.json</button>
+      <button class="btn ghost" id="btnImport">⤒ IMPORT keys.json</button>
+      <input type="file" id="fileImport" accept=".json,application/json" class="hidden" />
+    </section>
+
+    <!-- =============================== CONFIG ================================ -->
+    <section id="tab-config">
+      <div class="card">
+        <h2>Update / version <span class="bar"></span></h2>
+        <div class="row">
+          <div><label>latest version code</label><input id="cCode" type="number" min="1" /></div>
+          <div><label>latest version name</label><input id="cName" /></div>
+        </div>
+        <label>apk download url</label>
+        <input id="cUrl" placeholder="https://github.com/…/CHEN-TOOL-v3.4-release.apk" />
+        <label>changelog</label>
+        <textarea id="cLog" placeholder="what changed in this version…"></textarea>
+        <div class="check"><input type="checkbox" id="cForce" /><label for="cForce" style="margin:0">force update</label></div>
+        <div class="check"><input type="checkbox" id="cEnabled" checked /><label for="cEnabled" style="margin:0">service enabled (updates allowed)</label></div>
+        <label>in-app notice (shown on dashboard)</label>
+        <input id="cNotice" />
+        <button class="btn" id="btnSaveConfig">SAVE CONFIG</button>
+      </div>
+
+      <div class="card">
+        <h2>Security switches <span class="bar"></span></h2>
+        <div class="check"><input type="checkbox" id="cVpn" checked /><label for="cVpn" style="margin:0">VPN protection — block app while a VPN is active</label></div>
+        <div class="check"><input type="checkbox" id="cKill" /><label for="cKill" style="margin:0">kill switch — disable every installed build</label></div>
+        <div class="muted" style="margin-top:10px">
+          These switches are read by the app on every launch. VPN protection is ON by default and
+          the app enforces it even if this file cannot be reached.
         </div>
       </div>
-      <div class="row">
-        <div><label>Label / plan (optional)</label><input id="newLabel" placeholder="vip-1month" /></div>
-        <div><label>Expiry (optional, YYYY-MM-DD)</label><input id="newExpiry" placeholder="2026-12-31" /></div>
+    </section>
+
+    <!-- =============================== SETTINGS ============================== -->
+    <section id="tab-settings">
+      <div class="card">
+        <h2>Repository <span class="bar"></span></h2>
+        <div class="row">
+          <div><label>owner</label><input id="gOwner" /></div>
+          <div><label>repo</label><input id="gRepo" /></div>
+        </div>
+        <div class="row">
+          <div><label>branch</label><input id="gBranch" /></div>
+          <div><label>keys path</label><input id="gKeysPath" /></div>
+        </div>
+        <label>config path</label>
+        <input id="gConfigPath" />
+        <label>github token (contents: read &amp; write)</label>
+        <input id="gToken" type="password" placeholder="github_pat_…" />
+        <button class="btn" id="btnSaveRepo">SAVE &amp; CONNECT</button>
+        <button class="btn ghost" id="btnTest">TEST CONNECTION</button>
+        <div class="muted" style="margin-top:10px">
+          The token is stored only in this browser (localStorage) and is used to read and commit
+          <b>keys.json</b> / <b>config.json</b> in your repo. Nothing is sent anywhere else.
+        </div>
       </div>
-      <div class="row">
-        <button class="btn" id="addBtn">ADD KEY</button>
-        <button class="btn ghost" id="genBtn">GENERATE &amp; ADD</button>
+
+      <div class="card">
+        <h2>Panel lock <span class="bar"></span></h2>
+        <label>pin (optional — empty disables)</label>
+        <input id="gPin" type="password" inputmode="numeric" placeholder="••••" />
+        <button class="btn ghost" id="btnSavePin">SAVE PIN</button>
       </div>
-      <div class="muted">
-        Only the SHA-256 hash of a key is stored (in <code>keys.json</code>). The raw key is shown once
-        after adding — copy it and send it to your user.
+
+      <div class="card">
+        <h2>Activity log <span class="bar"></span></h2>
+        <div class="log" id="logBox"></div>
+        <button class="btn ghost sm" id="btnClearLog" style="margin-top:10px">CLEAR LOG</button>
       </div>
+
+      <div class="card">
+        <h2>Danger zone <span class="bar"></span></h2>
+        <button class="btn ghost" id="btnReset">RESET PANEL SETTINGS</button>
+      </div>
+    </section>
+
+    <!-- ================================ ABOUT ================================ -->
+    <section id="tab-about">
+      <div class="card">
+        <h2>How it works <span class="bar"></span></h2>
+        <div class="muted">
+          The app reads two files from GitHub Pages:<br><br>
+          <b>keys.json</b> — maps <code>sha256(key)</code> to
+          <code>{active,label,expiry,note,maxDevices,devices,reason}</code>. Only hashes are stored,
+          so leaking the file never reveals a usable key.<br><br>
+          <b>config.json</b> — version gate, update url and the security switches.<br><br>
+          Saving here commits to the repository through the GitHub Contents API. GitHub Pages
+          republishes automatically, and open apps pick the change up within seconds.
+        </div>
+      </div>
+      <div class="card">
+        <h2>Key format <span class="bar"></span></h2>
+        <div class="muted">
+          Keys are case-insensitive and spaces / dashes are ignored when hashing, so
+          <code>chen-ab12-cd34</code> and <code>CHENAB12CD34</code> are the same key.
+        </div>
+      </div>
+      <div class="card">
+        <h2>About <span class="bar"></span></h2>
+        <div class="kv"><span>panel</span><b>CHEN TOOL v3.4</b></div>
+        <div class="kv"><span>app</span><b>com.chentool.app</b></div>
+        <div class="kv"><span>repo</span><b id="aRepo">—</b></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom">
+    <button data-t="dash" class="on"><span class="ic">◈</span>DASH</button>
+    <button data-t="keys"><span class="ic">🔑</span>KEYS</button>
+    <button data-t="config"><span class="ic">⚙</span>CONFIG</button>
+    <button data-t="settings"><span class="ic">🛠</span>SETTINGS</button>
+    <button data-t="about"><span class="ic">ℹ</span>ABOUT</button>
+  </nav>
+</div>
+
+<!-- add / generate modal -->
+<dialog id="dlgAdd">
+  <div class="modal">
+    <h3>ADD / GENERATE KEYS</h3>
+    <label>mode</label>
+    <select id="addMode">
+      <option value="generate">generate new key(s)</option>
+      <option value="manual">I already have the raw key</option>
+    </select>
+
+    <div id="manualWrap" class="hidden">
+      <label>raw key</label>
+      <input id="addRaw" placeholder="CHEN-XXXX-XXXX-XXXX" />
     </div>
 
-    <div class="card">
-      <h2>ACTIVE KEYS</h2>
+    <div id="genWrap">
       <div class="row">
-        <button class="btn ghost" id="reloadKeys">RELOAD LIST</button>
+        <div><label>how many</label><input id="addCount" type="number" min="1" max="200" value="1" /></div>
+        <div><label>length</label><input id="addLen" type="number" min="8" max="64" value="20" /></div>
       </div>
-      <div id="keysList"></div>
+      <label>prefix (optional)</label>
+      <input id="addPrefix" placeholder="CHEN" />
     </div>
-  </section>
 
-  <!-- UPDATE -->
-  <section id="tab-update">
-    <div class="card">
-      <h2>APP UPDATE CONFIG</h2>
-      <div class="row">
-        <div><label>Latest version code (integer, must be &gt; installed)</label><input id="uCode" type="number" placeholder="3" /></div>
-        <div><label>Latest version name</label><input id="uName" placeholder="3.2" /></div>
-      </div>
-      <label>APK download URL (e.g. a GitHub Release asset link)</label>
-      <input id="uUrl" placeholder="https://github.com/user/repo/releases/download/v3.2/app.apk" />
-      <label>Changelog / what's new</label>
-      <textarea id="uLog" placeholder="• bug fixes&#10;• new inject engine"></textarea>
-      <div class="check"><input type="checkbox" id="uForce" /><span>Force update (user cannot skip)</span></div>
-      <div class="check"><input type="checkbox" id="uEnabled" checked /><span>Update checks enabled</span></div>
-      <div class="row">
-        <button class="btn" id="saveCfg">SAVE UPDATE CONFIG</button>
-        <button class="btn ghost" id="loadCfg">LOAD CURRENT</button>
-      </div>
-      <div class="muted">Saved to <code>config.json</code> in your repo.</div>
+    <label>label / plan</label>
+    <input id="addLabel" placeholder="VIP" />
+    <label>expiry (yyyy-mm-dd, empty = lifetime)</label>
+    <input id="addExpiry" placeholder="2027-12-31" />
+    <label>note (private, not shown to users)</label>
+    <input id="addNote" placeholder="sold to @user on telegram" />
+    <label>max devices (0 = unlimited)</label>
+    <input id="addDevices" type="number" min="0" value="0" />
+
+    <button class="btn" id="btnDoAdd">CREATE &amp; SAVE</button>
+    <button class="btn ghost" id="btnCancelAdd">CANCEL</button>
+    <div class="muted" style="margin-top:10px">
+      Generated keys are shown once so you can copy them. Store them safely — only hashes are saved.
     </div>
-  </section>
+  </div>
+</dialog>
 
-  <!-- SETUP -->
-  <section id="tab-setup">
-    <div class="card">
-      <h2>GITHUB CONNECTION</h2>
-      <div class="row">
-        <div><label>Owner / username</label><input id="ghOwner" placeholder="chenmodlite2" /></div>
-        <div><label>Repo</label><input id="ghRepo" placeholder="testingbabu" /></div>
-      </div>
-      <div class="row">
-        <div><label>Branch</label><input id="ghBranch" placeholder="main" /></div>
-      </div>
-      <label>Personal Access Token (classic, scope: <code>repo</code>)</label>
-      <input id="ghToken" type="password" placeholder="ghp_..." />
-      <div class="row">
-        <button class="btn" id="saveConn">SAVE CONNECTION</button>
-        <button class="btn ghost" id="testConn">TEST</button>
-      </div>
-      <div class="muted">
-        Create a token at <code>github.com/settings/tokens</code> (classic) with <b>repo</b> scope.
-        It is stored only in this browser (localStorage) and used to read/write
-        <code>keys.json</code> and <code>config.json</code>. Keep this page private.
-        The app reads those files from:<br />
-        <code id="rawBase">https://raw.githubusercontent.com/&lt;owner&gt;/&lt;repo&gt;/&lt;branch&gt;</code>
-      </div>
+<!-- edit modal -->
+<dialog id="dlgEdit">
+  <div class="modal">
+    <h3>EDIT KEY</h3>
+    <label>hash</label>
+    <input id="eHash" readonly />
+    <label>label / plan</label>
+    <input id="eLabel" />
+    <label>expiry (yyyy-mm-dd, empty = lifetime)</label>
+    <input id="eExpiry" />
+    <label>note</label>
+    <input id="eNote" />
+    <label>max devices (0 = unlimited)</label>
+    <input id="eDevices" type="number" min="0" />
+    <div class="check"><input type="checkbox" id="eActive" /><label for="eActive" style="margin:0">active (uncheck = ban)</label></div>
+    <label>ban / status reason</label>
+    <input id="eReason" placeholder="banned / chargeback / shared" />
+    <button class="btn" id="btnSaveEdit">SAVE CHANGES</button>
+    <button class="btn ghost" id="btnCancelEdit">CANCEL</button>
+  </div>
+</dialog>
+
+<!-- generated keys result -->
+<dialog id="dlgResult">
+  <div class="modal">
+    <h3>KEYS CREATED</h3>
+    <textarea id="resText" style="min-height:180px" readonly></textarea>
+    <button class="btn cyan" id="btnCopyRes">COPY ALL</button>
+    <button class="btn ghost" id="btnCloseRes">CLOSE</button>
+  </div>
+</dialog>
+
+<!-- lock screen -->
+<div class="lock hidden" id="lockScreen">
+  <div class="box">
+    <div class="logo" style="margin:0 auto 14px;width:58px;height:58px">
+      <svg viewBox="0 0 48 48" fill="none" style="width:36px;height:36px">
+        <path d="M24 3 L42 10.5 V24.5 C42 35 34.3 42.8 24 44.7 C13.7 42.8 6 35 6 24.5 V10.5 Z"
+              stroke="#7df9ff" stroke-width="2.4" fill="#150a2c"/>
+        <path d="M26.6 11.5 L15.4 26.6 H22.4 L20.6 36.5 L32.6 21 H25.4 Z" fill="#bf5fff"/>
+      </svg>
     </div>
-  </section>
-</main>
+    <div style="font-size:18px;margin-bottom:4px"><b style="color:var(--purple)">CHEN</b> <i style="color:var(--cyan);font-style:normal">TOOL</i></div>
+    <div class="muted" style="margin-bottom:14px">panel locked — enter pin</div>
+    <input id="lockPin" type="password" inputmode="numeric" placeholder="••••" style="text-align:center;letter-spacing:6px" />
+    <button class="btn" id="btnUnlock">UNLOCK</button>
+    <div class="muted" id="lockErr" style="color:var(--red);margin-top:10px"></div>
+  </div>
+</div>
 
-<div id="toast"></div>
+<div class="toast" id="toast"></div>
 
 <script>
-  const LS = 'chen_panel_gh';
-  const state = { owner:'chenmodlite2', repo:'testingbabu-backend', branch:'main', token:'' };
+/* =========================================================================
+   CHEN TOOL · control panel
+   Static GitHub Pages backend + GitHub Contents API for writes.
+   ========================================================================= */
+(function () {
+  "use strict";
 
-  const $ = (id)=>document.getElementById(id);
+  var DEFAULT_REPO = {
+    owner: "chenmodlite2",
+    repo: "testingbabu-backend",
+    branch: "main",
+    keysPath: "keys.json",
+    configPath: "config.json"
+  };
 
-  function toast(msg, kind){
-    const t=$('toast'); t.textContent=msg; t.className='show '+(kind||'');
-    clearTimeout(t._id); t._id=setTimeout(()=>t.className='',3000);
+  var LS = "chen.panel.v1";
+  var state = {
+    repo: Object.assign({}, DEFAULT_REPO),
+    token: "",
+    pin: "",
+    keys: {},
+    config: {},
+    filter: "all",
+    query: "",
+    lastSync: 0,
+    busy: false,
+    editing: null
+  };
+
+  /* ----------------------------------------------------------- persistence */
+  function load() {
+    try {
+      var raw = localStorage.getItem(LS);
+      if (!raw) return;
+      var obj = JSON.parse(raw);
+      state.repo = Object.assign({}, DEFAULT_REPO, obj.repo || {});
+      state.token = obj.token || "";
+      state.pin = obj.pin || "";
+    } catch (e) { /* ignore */ }
+  }
+  function save() {
+    try {
+      localStorage.setItem(LS, JSON.stringify({
+        repo: state.repo, token: state.token, pin: state.pin
+      }));
+    } catch (e) { /* ignore */ }
   }
 
-  function loadConn(){
-    try{
-      const s=JSON.parse(localStorage.getItem(LS)||'{}');
-      state.owner=s.owner||state.owner; state.repo=s.repo||state.repo;
-      state.branch=s.branch||state.branch; state.token=s.token||'';
-    }catch(e){}
-    $('ghOwner').value=state.owner; $('ghRepo').value=state.repo;
-    $('ghBranch').value=state.branch; $('ghToken').value=state.token;
-    $('secureWarn').style.display = window.isSecureContext ? 'none' : 'block';
-    updateRawBase();
-  }
-  function updateRawBase(){
-    $('rawBase').textContent = 'https://raw.githubusercontent.com/'+state.owner+'/'+state.repo+'/'+state.branch;
-  }
-  function saveConn(){
-    state.owner=$('ghOwner').value.trim()||state.owner;
-    state.repo=$('ghRepo').value.trim()||state.repo;
-    state.branch=$('ghBranch').value.trim()||'main';
-    state.token=$('ghToken').value.trim();
-    localStorage.setItem(LS, JSON.stringify(state));
-    updateRawBase();
-    toast('Connection saved','ok');
+  /* ------------------------------------------------------------------- ui */
+  var $ = function (id) { return document.getElementById(id); };
+
+  function toast(msg, kind) {
+    var t = $("toast");
+    t.textContent = msg;
+    t.className = "toast on" + (kind === "err" ? " err" : "");
+    clearTimeout(t._h);
+    t._h = setTimeout(function () { t.className = "toast"; }, 3200);
   }
 
-  // ---- UTF-8 safe base64 ----
-  function b64enc(str){
-    const bytes=new TextEncoder().encode(str); let bin='';
-    for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]);
+  function log(msg, cls) {
+    var box = $("logBox");
+    var d = document.createElement("div");
+    if (cls) d.className = cls;
+    var ts = new Date().toLocaleTimeString();
+    d.textContent = "[" + ts + "] " + msg;
+    box.appendChild(d);
+    box.scrollTop = box.scrollHeight;
+    while (box.childNodes.length > 400) box.removeChild(box.firstChild);
+  }
+
+  function setStatus(text, kind) {
+    $("statusText").textContent = text;
+    $("statusChip").className = "chip" + (kind === "off" ? " off" : kind === "busy" ? " busy" : "");
+  }
+
+  function busy(on) {
+    state.busy = on;
+    setStatus(on ? "syncing" : (state.lastSync ? "synced" : "idle"), on ? "busy" : "");
+  }
+
+  /* --------------------------------------------------------------- hashing */
+  function normalizeKey(raw) {
+    return String(raw || "").trim().toUpperCase().replace(/ /g, "")
+      .replace(/–/g, "-").replace(/—/g, "-");
+  }
+  function sha256hex(str) {
+    if (!(window.crypto && crypto.subtle)) return Promise.reject(new Error("secure context required (https)"));
+    var buf = new TextEncoder().encode(str);
+    return crypto.subtle.digest("SHA-256", buf).then(function (d) {
+      return Array.prototype.map.call(new Uint8Array(d), function (b) {
+        return ("0" + b.toString(16)).slice(-2);
+      }).join("");
+    });
+  }
+
+  /* --------------------------------------------------------------- github */
+  function ghHeaders() {
+    var h = { "Accept": "application/vnd.github+json" };
+    if (state.token) h["Authorization"] = "Bearer " + state.token;
+    return h;
+  }
+  function apiUrl(path) {
+    return "https://api.github.com/repos/" + state.repo.owner + "/" + state.repo.repo +
+      "/contents/" + path;
+  }
+  function pagesUrl(path) {
+    return "https://" + state.repo.owner + ".github.io/" + state.repo.repo + "/" + path +
+      "?cb=" + Date.now();
+  }
+
+  function b64decodeUtf8(b64) {
+    var bin = atob(String(b64).replace(/\s/g, ""));
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder("utf-8").decode(bytes);
+  }
+  function b64encodeUtf8(str) {
+    var bytes = new TextEncoder().encode(str);
+    var bin = "";
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
     return btoa(bin);
   }
-  function b64dec(b64){
-    const bin=atob((b64||'').replace(/\s/g,''));
-    const bytes=Uint8Array.from(bin, c=>c.charCodeAt(0));
-    return new TextDecoder().decode(bytes);
+
+  /** Reads a JSON file: Contents API first (when a token exists), than Pages. */
+  function readJson(path) {
+    if (state.token) {
+      return fetch(apiUrl(path) + "?ref=" + encodeURIComponent(state.repo.branch) + "&t=" + Date.now(),
+        { headers: ghHeaders(), cache: "no-store" })
+        .then(function (r) {
+          if (r.status === 401 || r.status === 403) throw new Error("token rejected (" + r.status + ")");
+          if (r.status === 404) throw new Error("not found: " + path);
+          if (!r.ok) throw new Error("github " + r.status);
+          return r.json();
+        })
+        .then(function (j) {
+          return { json: JSON.parse(b64decodeUtf8(j.content || "")), sha: j.sha };
+        })
+        .catch(function (e) {
+          log("api read failed (" + e.message + ") — falling back to pages", "w");
+          return fetch(pagesUrl(path), { cache: "no-store" })
+            .then(function (r) { if (!r.ok) throw new Error("pages " + r.status); return r.json(); })
+            .then(function (j) { return { json: j, sha: null }; });
+        });
+    }
+    return fetch(pagesUrl(path), { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error("pages " + r.status); return r.json(); })
+      .then(function (j) { return { json: j, sha: null }; });
   }
 
-  // ---- GitHub Contents API ----
-  function contentsUrl(path){
-    return 'https://api.github.com/repos/'+state.owner+'/'+state.repo+'/contents/'+path;
+  function writeJson(path, obj, message) {
+    if (!state.token) return Promise.reject(new Error("no token — add one in settings"));
+    var body = JSON.stringify(obj, null, 2);
+    function attempt(sha) {
+      var payload = {
+        message: message || ("panel: update " + path + " @ " + new Date().toISOString()),
+        content: b64encodeUtf8(body),
+        branch: state.repo.branch
+      };
+      if (sha) payload.sha = sha;
+      return fetch(apiUrl(path), {
+        method: "PUT",
+        headers: Object.assign({ "Content-Type": "application/json" }, ghHeaders()),
+        body: JSON.stringify(payload)
+      });
+    }
+    function getSha() {
+      return fetch(apiUrl(path) + "?ref=" + encodeURIComponent(state.repo.branch) + "&t=" + Date.now(),
+        { headers: ghHeaders(), cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) { return j && j.sha ? j.sha : null; });
+    }
+    // try with the cached sha first, then re-read and retry once on conflict
+    return Promise.resolve(state._sha && state._sha[path])
+      .then(function (sha) { return sha || getSha(); })
+      .then(function (sha) {
+        return attempt(sha).then(function (r) {
+          if (r.status === 409 || r.status === 422) {
+            return getSha().then(function (fresh) { return attempt(fresh); });
+          }
+          return r;
+        });
+      })
+      .then(function (r) {
+        if (!r.ok) return r.text().then(function (t) { throw new Error("write failed (" + r.status + ")"); });
+        log("saved " + path, "s");
+        return r.json();
+      });
   }
-  async function ghRaw(path, opts){
-    if(!state.token) throw new Error('Set your GitHub token in SETUP first');
-    const r=await fetch(contentsUrl(path), Object.assign({
-      headers:{
-        'Authorization':'Bearer '+state.token,
-        'Accept':'application/vnd.github+json',
-        'X-GitHub-Api-Version':'2022-11-28'
+
+  /* ----------------------------------------------------------------- sync */
+  function sync() {
+    busy(true);
+    state._sha = {};
+    return Promise.all([
+      readJson(state.repo.keysPath).then(function (r) {
+        state.keys = (r.json && typeof r.json === "object" && !Array.isArray(r.json)) ? r.json : {};
+        if (r.sha) state._sha[state.repo.keysPath] = r.sha;
+      }),
+      readJson(state.repo.configPath).then(function (r) {
+        state.config = (r.json && typeof r.json === "object" && !Array.isArray(r.json)) ? r.json : {};
+        if (r.sha) state._sha[state.repo.configPath] = r.sha;
+      }).catch(function () { state.config = state.config || {}; })
+    ]).then(function () {
+      state.lastSync = Date.now();
+      renderAll();
+      busy(false);
+      log("synced " + Object.keys(state.keys).length + " keys");
+    }).catch(function (e) {
+      busy(false);
+      setStatus("offline", "off");
+      log("sync failed: " + e.message, "e");
+      toast("Sync failed: " + e.message, "err");
+    });
+  }
+
+  /* --------------------------------------------------------------- render */
+  function isBanned(v) { return v.banned === true || v.active === false; }
+  function daysLeft(expiry) {
+    if (!expiry) return Infinity;
+    var t = Date.parse(expiry + "T00:00:00");
+    if (isNaN(t)) return Infinity;
+    return Math.floor((t - Date.now()) / 86400000);
+  }
+  function isExpired(expiry) { return daysLeft(expiry) < 0; }
+  function isExpiring(expiry) {
+    var d = daysLeft(expiry);
+    return d !== Infinity && d >= 0 && d <= 30;
+  }
+  function entries() {
+    return Object.keys(state.keys).map(function (h) {
+      return Object.assign({ hash: h }, state.keys[h] || {});
+    });
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function renderAll() {
+    renderStats();
+    renderKeys();
+    renderDashRecent();
+    renderConfig();
+    renderMeta();
+  }
+
+  function renderMeta() {
+    $("dBackend").textContent = state.repo.owner + "/" + state.repo.repo;
+    $("dBranch").textContent = state.repo.branch + (state.token ? " · token" : " · read only");
+    $("dSync").textContent = state.lastSync ? new Date(state.lastSync).toLocaleTimeString() : "never";
+    $("aRepo").textContent = state.repo.owner + "/" + state.repo.repo;
+    $("dVpn").textContent = state.config.vpnBlock === false ? "disabled" : "enabled";
+    $("dEnabled").textContent = state.config.enabled === false ? "DISABLED" : "enabled";
+    $("dVer").textContent = (state.config.latestName || "—") + " (code " + (state.config.latestCode || 0) + ")";
+    $("dApk").textContent = state.config.apkUrl || "—";
+  }
+
+  function renderStats() {
+    var all = entries();
+    var active = all.filter(function (e) { return !isBanned(e) && !isExpired(e.expiry); });
+    var banned = all.filter(isBanned);
+    var expiring = all.filter(function (e) { return !isBanned(e) && isExpiring(e.expiry); });
+    $("sTotal").textContent = all.length;
+    $("sActive").textContent = active.length;
+    $("sBanned").textContent = banned.length;
+    $("sExpiring").textContent = expiring.length;
+    $("keysCount").textContent = all.length;
+  }
+
+  function badgeFor(e) {
+    if (isBanned(e)) return '<span class="badge no">BANNED</span>';
+    if (isExpired(e.expiry)) return '<span class="badge no">EXPIRED</span>';
+    if (isExpiring(e.expiry)) {
+      return '<span class="badge warn">' + daysLeft(e.expiry) + 'd LEFT</span>';
+    }
+    if (!e.expiry) return '<span class="badge vip">LIFETIME</span>';
+    return '<span class="badge ok">ACTIVE</span>';
+  }
+
+  function keyCard(e) {
+    var dev = e.devices ? Object.keys(e.devices).length : 0;
+    var max = e.maxDevices || 0;
+    var meta = [];
+    if (e.expiry) meta.push("expiry " + esc(e.expiry));
+    else meta.push("expiry lifetime");
+    if (max > 0) meta.push("devices " + dev + "/" + max);
+    if (e.created) meta.push("created " + new Date(e.created).toLocaleDateString());
+    if (e.note) meta.push("note: " + esc(e.note));
+    if (e.reason && isBanned(e)) meta.push("reason: " + esc(e.reason));
+    return '<div class="key' + (isBanned(e) ? " banned" : "") + '" data-h="' + esc(e.hash) + '">' +
+      '<div class="t"><b>' + esc(e.label || "unlabelled") + '</b>' + badgeFor(e) + '</div>' +
+      '<div class="hash">' + esc(e.hash) + '</div>' +
+      '<div class="meta">' + meta.join(" · ") + '</div>' +
+      '<div class="acts">' +
+        '<button class="btn sm ghost" data-act="copy">COPY</button>' +
+        '<button class="btn sm cyan" data-act="edit">EDIT</button>' +
+        (isBanned(e)
+          ? '<button class="btn sm green" data-act="unban">UNBAN</button>'
+          : '<button class="btn sm danger" data-act="ban">BAN</button>') +
+        '<button class="btn sm ghost" data-act="reset">RESET DEVICES</button>' +
+        '<button class="btn sm danger" data-act="del">DELETE</button>' +
+      '</div></div>';
+  }
+
+  function filtered() {
+    var q = state.query.toLowerCase();
+    return entries().filter(function (e) {
+      if (state.filter === "active" && (isBanned(e) || isExpired(e.expiry))) return false;
+      if (state.filter === "banned" && !isBanned(e)) return false;
+      if (state.filter === "expiring" && !isExpiring(e.expiry)) return false;
+      if (state.filter === "never" && e.expiry) return false;
+      if (!q) return true;
+      return (e.hash || "").toLowerCase().indexOf(q) >= 0 ||
+        (e.label || "").toLowerCase().indexOf(q) >= 0 ||
+        (e.note || "").toLowerCase().indexOf(q) >= 0;
+    }).sort(function (a, b) { return (b.created || 0) - (a.created || 0); });
+  }
+
+  function renderKeys() {
+    var list = filtered();
+    if (!list.length) {
+      $("keyList").innerHTML = '<div class="muted" style="text-align:center;padding:22px">no keys match</div>';
+      return;
+    }
+    $("keyList").innerHTML = list.map(keyCard).join("");
+  }
+
+  function renderDashRecent() {
+    var list = entries().sort(function (a, b) { return (b.created || 0) - (a.created || 0); }).slice(0, 4);
+    $("dashRecent").innerHTML = list.length
+      ? list.map(keyCard).join("")
+      : '<div class="muted" style="text-align:center;padding:18px">no keys yet — add one from the KEYS tab</div>';
+  }
+
+  function renderConfig() {
+    var c = state.config || {};
+    $("cCode").value = c.latestCode != null ? c.latestCode : 5;
+    $("cName").value = c.latestName || "3.4";
+    $("cUrl").value = c.apkUrl || "";
+    $("cLog").value = c.changelog || "";
+    $("cNotice").value = c.notice || "";
+    $("cForce").checked = c.force === true;
+    $("cEnabled").checked = c.enabled !== false;
+    $("cVpn").checked = c.vpnBlock !== false;
+    $("cKill").checked = c.killSwitch === true;
+  }
+
+  /* ----------------------------------------------------------- key actions */
+  function mutate(mutator, message) {
+    var next = JSON.parse(JSON.stringify(state.keys));
+    mutator(next);
+    return writeJson(state.repo.keysPath, next, message)
+      .then(function () {
+        state._sha = state._sha || {};
+        delete state._sha[state.repo.keysPath];
+        state.keys = next;
+        renderAll();
+      })
+      .catch(function (e) { toast(e.message, "err"); log("write failed: " + e.message, "e"); });
+  }
+
+  function randomKey(len, prefix) {
+    var alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    var out = "";
+    var arr = new Uint32Array(len);
+    (window.crypto || window.msCrypto).getRandomValues(arr);
+    for (var i = 0; i < len; i++) out += alphabet[arr[i] % alphabet.length];
+    return (prefix ? prefix.toUpperCase() + "-" : "") + out;
+  }
+
+  /* ================================================================ events */
+  function bindNav() {
+    document.querySelectorAll("nav.bottom button").forEach(function (b) {
+      b.addEventListener("click", function () {
+        document.querySelectorAll("nav.bottom button").forEach(function (x) { x.classList.remove("on"); });
+        document.querySelectorAll("main section").forEach(function (x) { x.classList.remove("on"); });
+        b.classList.add("on");
+        $("tab-" + b.dataset.t).classList.add("on");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
+  }
+
+  function bindKeys() {
+    $("keySearch").addEventListener("input", function (e) {
+      state.query = e.target.value;
+      renderKeys();
+    });
+    $("keyFilters").addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      state.filter = b.dataset.f;
+      document.querySelectorAll("#keyFilters button").forEach(function (x) { x.classList.remove("on"); });
+      b.classList.add("on");
+      renderKeys();
+    });
+
+    function handle(e) {
+      var b = e.target.closest("button[data-act]");
+      if (!b) return;
+      var card = e.target.closest(".key");
+      if (!card) return;
+      var hash = card.getAttribute("data-h");
+      var entry = state.keys[hash] || {};
+      var act = b.dataset.act;
+
+      if (act === "copy") {
+        copyText(hash);
+        toast("hash copied");
+      } else if (act === "edit") {
+        openEdit(hash, entry);
+      } else if (act === "ban") {
+        openEdit(hash, entry, true);
+      } else if (act === "unban") {
+        mutate(function (k) {
+          var v = k[hash] || {};
+          v.active = true; v.banned = false; v.reason = "";
+          k[hash] = v;
+        }, "panel: unban " + hash.slice(0, 12));
+        toast("key unbanned");
+      } else if (act === "reset") {
+        mutate(function (k) {
+          var v = k[hash] || {};
+          v.devices = {};
+          k[hash] = v;
+        }, "panel: reset devices " + hash.slice(0, 12));
+        toast("devices reset");
+      } else if (act === "del") {
+        if (!confirm("Delete this key permanently?")) return;
+        mutate(function (k) { delete k[hash]; }, "panel: delete " + hash.slice(0, 12));
+        toast("key deleted");
       }
-    }, opts||{}));
-    return r;
-  }
-  async function readJson(path){
-    const r=await ghRaw(path+'?ref='+encodeURIComponent(state.branch));
-    if(r.status===404) return { data:null, sha:null };
-    const j=await r.json().catch(()=>({}));
-    if(!r.ok) throw new Error(j.message||('HTTP '+r.status));
-    let data=null; try{ data=JSON.parse(b64dec(j.content)); }catch(e){}
-    return { data, sha:j.sha };
-  }
-  async function writeJson(path, obj, message, sha){
-    const body={ message: message||('update '+path), content: b64enc(JSON.stringify(obj,null,2)), branch: state.branch };
-    if(sha) body.sha=sha;
-    const r=await ghRaw(path,{ method:'PUT', body: JSON.stringify(body) });
-    const j=await r.json().catch(()=>({}));
-    if(!r.ok) throw new Error(j.message||('HTTP '+r.status));
-    return j;
+    }
+    $("keyList").addEventListener("click", handle);
+    $("dashRecent").addEventListener("click", handle);
   }
 
-  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  function normKey(k){ return k.trim().toUpperCase().replace(/ /g,''); }
-  async function sha256hex(str){
-    if(!window.crypto||!window.crypto.subtle) throw new Error('HTTPS required for hashing');
-    const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
-  }
-  function genKey(){
-    const seg=()=>Array.from({length:4},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
-    return 'CHEN-'+seg()+'-'+seg()+'-'+seg();
-  }
-
-  async function addKeyObject(rawKey,label,expiry){
-    const hash=await sha256hex(normKey(rawKey));
-    const {data,sha}=await readJson('keys.json');
-    const obj=data||{};
-    obj[hash]={active:true,label:label||'',expiry:expiry||'',created:Date.now()};
-    await writeJson('keys.json',obj,'add key '+hash.slice(0,12),sha);
-    return hash;
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(function () { });
+      return;
+    }
+    var ta = document.createElement("textarea");
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch (e) { }
+    document.body.removeChild(ta);
   }
 
-  $('addBtn').onclick=async()=>{
-    const raw=$('newKey').value.trim();
-    if(!raw) return toast('Enter a key or use GENERATE','err');
-    try{
-      const hash=await addKeyObject(raw,$('newLabel').value.trim(),$('newExpiry').value.trim());
-      toast('Key added · '+hash.slice(0,12)+'…','ok');
-      $('newKey').value=''; $('newLabel').value=''; $('newExpiry').value='';
-      loadKeys();
-    }catch(e){ toast(e.message,'err'); }
-  };
-  $('genBtn').onclick=async()=>{
-    const raw=genKey();
-    try{
-      await addKeyObject(raw,$('newLabel').value.trim(),$('newExpiry').value.trim());
-      const box=$('newKey'); box.value=raw; box.select();
-      try{ await navigator.clipboard.writeText(raw); toast('Key generated & copied: '+raw,'ok'); }
-      catch(e){ toast('Key generated (copy it): '+raw,'ok'); }
-      loadKeys();
-    }catch(e){ toast(e.message,'err'); }
-  };
-
-  async function loadKeys(){
-    if(!state.token){ $('keysList').innerHTML='<div class="muted">Set your GitHub token in SETUP first.</div>'; return; }
-    $('keysList').innerHTML='<div class="muted">loading…</div>';
-    try{
-      const {data}=await readJson('keys.json');
-      const map=data||{};
-      const hashes=Object.keys(map);
-      if(!hashes.length){ $('keysList').innerHTML='<div class="muted">No keys yet.</div>'; return; }
-      hashes.sort((a,b)=>(map[b].created||0)-(map[a].created||0));
-      $('keysList').innerHTML=hashes.map(h=>{
-        const k=map[h]||{}; const on=k.active!==false;
-        return '<div class="key-row">'
-          +'<div class="info"><div class="key-hash">'+esc(h)+'</div>'
-          +'<div class="key-meta">'+(k.label?esc(k.label):'—')+(k.expiry?(' · exp '+esc(k.expiry)):'')+'</div></div>'
-          +'<span class="pill '+(on?'on':'off')+'">'+(on?'ON':'OFF')+'</span>'
-          +'<button class="icon" data-act="toggle" data-h="'+esc(h)+'" data-on="'+on+'">'+(on?'DISABLE':'ENABLE')+'</button>'
-          +'<button class="icon" data-act="edit" data-h="'+esc(h)+'">EDIT</button>'
-          +'<button class="icon" data-act="del" data-h="'+esc(h)+'">DEL</button>'
-          +'</div>';
-      }).join('');
-    }catch(e){ $('keysList').innerHTML='<div class="muted">Error: '+esc(e.message)+'</div>'; }
+  /* ------------------------------------------------------------------ add */
+  function openAdd() {
+    $("addRaw").value = "";
+    $("addCount").value = 1;
+    $("addLen").value = 20;
+    $("addPrefix").value = "CHEN";
+    $("addLabel").value = "VIP";
+    $("addExpiry").value = "";
+    $("addNote").value = "";
+    $("addDevices").value = 0;
+    syncAddMode();
+    $("dlgAdd").showModal();
   }
-  $('reloadKeys').onclick=loadKeys;
-
-  $('keysList').addEventListener('click', async (ev)=>{
-    const b=ev.target.closest('button[data-act]'); if(!b) return;
-    const h=b.dataset.h, act=b.dataset.act;
-    try{
-      const {data,sha}=await readJson('keys.json');
-      const map=data||{}; if(!map[h]) { toast('Key missing','err'); return; }
-      if(act==='toggle'){ map[h].active = b.dataset.on!=='true'; await writeJson('keys.json',map,'toggle '+h.slice(0,12),sha); toast('Updated','ok'); loadKeys(); }
-      else if(act==='edit'){
-        const label=prompt('Label / plan:', map[h].label||''); if(label===null) return;
-        const expiry=prompt('Expiry (YYYY-MM-DD) or empty:', map[h].expiry||''); if(expiry===null) return;
-        map[h].label=label.trim(); map[h].expiry=expiry.trim();
-        await writeJson('keys.json',map,'edit '+h.slice(0,12),sha); toast('Saved','ok'); loadKeys();
-      } else if(act==='del'){
-        if(!confirm('Delete this key permanently?')) return;
-        delete map[h];
-        await writeJson('keys.json',map,'delete '+h.slice(0,12),sha); toast('Deleted','ok'); loadKeys();
-      }
-    }catch(e){ toast(e.message,'err'); }
-  });
-
-  // ---- update config ----
-  async function loadCfg(){
-    if(!state.token) return toast('Set GitHub token in SETUP','err');
-    try{
-      const {data}=await readJson('config.json');
-      const c=data||{};
-      $('uCode').value=c.latestCode||''; $('uName').value=c.latestName||'';
-      $('uUrl').value=c.apkUrl||''; $('uLog').value=c.changelog||'';
-      $('uForce').checked=!!c.force; $('uEnabled').checked=c.enabled!==false;
-      toast('Loaded','ok');
-    }catch(e){ toast(e.message,'err'); }
+  function syncAddMode() {
+    var manual = $("addMode").value === "manual";
+    $("manualWrap").classList.toggle("hidden", !manual);
+    $("genWrap").classList.toggle("hidden", manual);
   }
-  $('loadCfg').onclick=loadCfg;
-  $('saveCfg').onclick=async()=>{
-    try{
-      const {sha}=await readJson('config.json');
-      await writeJson('config.json',{
-        latestCode: parseInt($('uCode').value||'0',10)||0,
-        latestName: $('uName').value.trim(),
-        apkUrl: $('uUrl').value.trim(),
-        changelog: $('uLog').value.trim(),
-        force: $('uForce').checked,
-        enabled: $('uEnabled').checked,
-      },'update app config',sha);
-      toast('Update config saved','ok');
-    }catch(e){ toast(e.message,'err'); }
-  };
 
-  // ---- setup ----
-  $('saveConn').onclick=()=>{ saveConn(); loadKeys(); };
-  $('testConn').onclick=async()=>{
-    saveConn();
-    try{ const {data}=await readJson('config.json'); toast('Connection OK'+(data?'':' (config.json missing)'),'ok'); }
-    catch(e){ toast('Failed: '+e.message,'err'); }
-  };
+  function doAdd() {
+    var label = $("addLabel").value.trim();
+    var expiry = $("addExpiry").value.trim();
+    var note = $("addNote").value.trim();
+    var maxDevices = parseInt($("addDevices").value, 10) || 0;
+    var manual = $("addMode").value === "manual";
 
-  document.querySelectorAll('nav button').forEach(b=>{
-    b.onclick=()=>{
-      document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
-      document.querySelectorAll('section').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      $('tab-'+b.dataset.tab).classList.add('active');
-      if(b.dataset.tab==='keys') loadKeys();
-      if(b.dataset.tab==='update') loadCfg();
+    if (expiry && !/^\d{4}-\d{2}-\d{2}$/.test(expiry)) {
+      toast("expiry must be yyyy-mm-dd", "err");
+      return;
+    }
+
+    var raws = [];
+    if (manual) {
+      if (!$("addRaw").value.trim()) { toast("enter a raw key", "err"); return; }
+      raws.push($("addRaw").value.trim());
+    } else {
+      var count = Math.max(1, Math.min(200, parseInt($("addCount").value, 10) || 1));
+      var len = Math.max(8, Math.min(64, parseInt($("addLen").value, 10) || 20));
+      var prefix = $("addPrefix").value.trim();
+      for (var i = 0; i < count; i++) raws.push(randomKey(len, prefix));
+    }
+
+    Promise.all(raws.map(function (raw) {
+      return sha256hex(normalizeKey(raw)).then(function (h) { return { raw: raw, hash: h }; });
+    })).then(function (pairs) {
+      var next = JSON.parse(JSON.stringify(state.keys));
+      var created = Date.now();
+      pairs.forEach(function (p) {
+        next[p.hash] = {
+          active: true, label: label, expiry: expiry, note: note,
+          maxDevices: maxDevices, devices: {}, created: created,
+          banned: false, reason: ""
+        };
+      });
+      return writeJson(state.repo.keysPath, next, "panel: add " + pairs.length + " key(s)")
+        .then(function () {
+          state.keys = next;
+          state._sha = state._sha || {};
+          delete state._sha[state.repo.keysPath];
+          renderAll();
+          $("dlgAdd").close();
+          $("resText").value = pairs.map(function (p) { return p.raw; }).join("\n");
+          $("dlgResult").showModal();
+          toast(pairs.length + " key(s) added");
+          log("added " + pairs.length + " key(s)", "s");
+        });
+    }).catch(function (e) {
+      toast(e.message, "err");
+    });
+  }
+
+  /* ----------------------------------------------------------------- edit */
+  function openEdit(hash, entry, forceBan) {
+    state.editing = hash;
+    $("eHash").value = hash;
+    $("eLabel").value = entry.label || "";
+    $("eExpiry").value = entry.expiry || "";
+    $("eNote").value = entry.note || "";
+    $("eDevices").value = entry.maxDevices || 0;
+    $("eActive").checked = forceBan ? false : !isBanned(entry);
+    $("eReason").value = entry.reason || (forceBan ? "banned" : "");
+    $("dlgEdit").showModal();
+  }
+
+  function saveEdit() {
+    var hash = state.editing;
+    if (!hash) return;
+    var expiry = $("eExpiry").value.trim();
+    if (expiry && !/^\d{4}-\d{2}-\d{2}$/.test(expiry)) {
+      toast("expiry must be yyyy-mm-dd", "err");
+      return;
+    }
+    var active = $("eActive").checked;
+    mutate(function (k) {
+      var v = k[hash] || {};
+      v.label = $("eLabel").value.trim();
+      v.expiry = expiry;
+      v.note = $("eNote").value.trim();
+      v.maxDevices = parseInt($("eDevices").value, 10) || 0;
+      v.active = active;
+      v.banned = !active;
+      v.reason = active ? "" : ($("eReason").value.trim() || "banned");
+      k[hash] = v;
+    }, "panel: edit " + hash.slice(0, 12));
+    $("dlgEdit").close();
+    toast("key updated");
+  }
+
+  /* --------------------------------------------------------------- config */
+  function saveConfig() {
+    var next = Object.assign({}, state.config, {
+      latestCode: parseInt($("cCode").value, 10) || 0,
+      latestName: $("cName").value.trim() || "3.4",
+      apkUrl: $("cUrl").value.trim(),
+      changelog: $("cLog").value.trim(),
+      notice: $("cNotice").value.trim(),
+      force: $("cForce").checked,
+      enabled: $("cEnabled").checked,
+      vpnBlock: $("cVpn").checked,
+      killSwitch: $("cKill").checked
+    });
+    writeJson(state.repo.configPath, next, "panel: update config")
+      .then(function () {
+        state.config = next;
+        state._sha = state._sha || {};
+        delete state._sha[state.repo.configPath];
+        renderAll();
+        toast("config saved");
+      })
+      .catch(function (e) { toast(e.message, "err"); });
+  }
+
+  /* ------------------------------------------------------------- settings */
+  function fillSettings() {
+    $("gOwner").value = state.repo.owner;
+    $("gRepo").value = state.repo.repo;
+    $("gBranch").value = state.repo.branch;
+    $("gKeysPath").value = state.repo.keysPath;
+    $("gConfigPath").value = state.repo.configPath;
+    $("gToken").value = state.token;
+    $("gPin").value = state.pin;
+  }
+
+  function saveRepo() {
+    state.repo = {
+      owner: $("gOwner").value.trim(),
+      repo: $("gRepo").value.trim(),
+      branch: $("gBranch").value.trim() || "main",
+      keysPath: $("gKeysPath").value.trim() || "keys.json",
+      configPath: $("gConfigPath").value.trim() || "config.json"
     };
-  });
+    state.token = $("gToken").value.trim();
+    save();
+    log("repo set to " + state.repo.owner + "/" + state.repo.repo + " (" + state.repo.branch + ")", "s");
+    sync();
+  }
 
-  loadConn();
+  function testConnection() {
+    busy(true);
+    var r = state.repo;
+    fetch("https://api.github.com/repos/" + r.owner + "/" + r.repo, { headers: ghHeaders() })
+      .then(function (res) {
+        busy(false);
+        if (res.ok) { toast("repository reachable"); log("repo ok", "s"); }
+        else if (res.status === 404) { toast("repo not found / no access", "err"); log("repo 404", "e"); }
+        else { toast("github " + res.status, "err"); log("repo " + res.status, "e"); }
+      })
+      .catch(function (e) { busy(false); toast("network: " + e.message, "err"); });
+  }
+
+  /* --------------------------------------------------------------- import */
+  function doExport() {
+    var blob = new Blob([JSON.stringify(state.keys, null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "keys.json";
+    a.click();
+    toast("exported keys.json");
+  }
+
+  function doImport(file) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var obj = JSON.parse(String(reader.result));
+        if (!obj || typeof obj !== "object" || Array.isArray(obj)) throw new Error("not a key map");
+        var merged = Object.assign({}, state.keys, obj);
+        writeJson(state.repo.keysPath, merged, "panel: import keys.json")
+          .then(function () {
+            state.keys = merged;
+            state._sha = state._sha || {};
+            delete state._sha[state.repo.keysPath];
+            renderAll();
+            toast("imported " + Object.keys(obj).length + " keys");
+          })
+          .catch(function (e) { toast(e.message, "err"); });
+      } catch (e) { toast("invalid json", "err"); }
+    };
+    reader.readAsText(file);
+  }
+
+  /* ----------------------------------------------------------------- lock */
+  function applyLock() {
+    if (state.pin) $("lockScreen").classList.remove("hidden");
+    else $("lockScreen").classList.add("hidden");
+  }
+  function unlock() {
+    if ($("lockPin").value === state.pin) {
+      $("lockScreen").classList.add("hidden");
+      $("lockErr").textContent = "";
+      $("lockPin").value = "";
+    } else {
+      $("lockErr").textContent = "wrong pin";
+    }
+  }
+
+  /* ------------------------------------------------------------------ boot */
+  function boot() {
+    load();
+    bindNav();
+    bindKeys();
+    fillSettings();
+    applyLock();
+
+    $("btnRefresh").addEventListener("click", sync);
+    $("btnTest").addEventListener("click", testConnection);
+    $("btnSaveRepo").addEventListener("click", saveRepo);
+    $("btnSaveConfig").addEventListener("click", saveConfig);
+    $("btnOpenAdd").addEventListener("click", openAdd);
+    $("addMode").addEventListener("change", syncAddMode);
+    $("btnDoAdd").addEventListener("click", doAdd);
+    $("btnCancelAdd").addEventListener("click", function () { $("dlgAdd").close(); });
+    $("btnSaveEdit").addEventListener("click", saveEdit);
+    $("btnCancelEdit").addEventListener("click", function () { $("dlgEdit").close(); });
+    $("btnCopyRes").addEventListener("click", function () {
+      copyText($("resText").value); toast("copied");
+    });
+    $("btnCloseRes").addEventListener("click", function () { $("dlgResult").close(); });
+    $("btnExport").addEventListener("click", doExport);
+    $("btnImport").addEventListener("click", function () { $("fileImport").click(); });
+    $("fileImport").addEventListener("change", function (e) {
+      if (e.target.files && e.target.files[0]) doImport(e.target.files[0]);
+    });
+    $("btnSavePin").addEventListener("click", function () {
+      state.pin = $("gPin").value.trim();
+      save(); applyLock();
+      toast(state.pin ? "pin enabled" : "pin disabled");
+    });
+    $("btnClearLog").addEventListener("click", function () { $("logBox").innerHTML = ""; });
+    $("btnReset").addEventListener("click", function () {
+      if (!confirm("Reset panel settings (repo, token, pin)? Keys are not touched.")) return;
+      localStorage.removeItem(LS);
+      location.reload();
+    });
+    $("btnUnlock").addEventListener("click", unlock);
+    $("lockPin").addEventListener("keydown", function (e) { if (e.key === "Enter") unlock(); });
+
+    log("panel ready · " + state.repo.owner + "/" + state.repo.repo);
+    if (window.crypto && crypto.subtle) sync();
+    else {
+      toast("open this panel over https", "err");
+      log("crypto.subtle unavailable — use https", "e");
+    }
+
+    setInterval(function () { if (!state.busy && !state.pin) sync(); }, 15000);
+    setInterval(function () { if (!state.busy && state.pin) syncSilent(); }, 15000);
+  }
+
+  function syncSilent() {
+    Promise.all([
+      fetch(pagesUrl(state.repo.keysPath), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }),
+      fetch(pagesUrl(state.repo.configPath), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; })
+    ]).then(function (r) {
+      if (r[0]) state.keys = r[0];
+      if (r[1]) state.config = r[1];
+      state.lastSync = Date.now();
+      renderAll();
+    }).catch(function () { });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+})();
 </script>
 </body>
 </html>
